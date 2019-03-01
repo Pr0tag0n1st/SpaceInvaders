@@ -73,6 +73,56 @@ int main() {
 			redraw = true;
 		}
 
-	}
+		//input section
+		else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE){
+			break;
+			}
+		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+			switch (ev.keyboard.keycode) {
+			case ALLEGRO_KEY_LEFT:
+				key[KEY_LEFT] = true;
+				break;
+			case ALLEGRO_KEY_RIGHT:
+				key[KEY_RIGHT] = true;
+				break;
+			case ALLEGRO_KEY_Z:
+				key[KEY_Z] = true;
+				break;
+			case ALLEGRO_KEY_ESCAPE:
+				doexit = true;
+				break;
+			}
 
+		}
+		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
+			switch (ev.keyboard.keycode) {
+			case ALLEGRO_KEY_LEFT:
+				key[KEY_LEFT] = false;
+				break;
+			case ALLEGRO_KEY_RIGHT:
+				key[KEY_RIGHT] = false;
+				break;
+			case ALLEGRO_KEY_Z:
+				key[KEY_Z] = false;
+				break;
+			}
+		}
+		if (redraw && al_is_event_queue_empty(event_queue)) {
+			redraw = false;
+
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+
+			if (b1.isAlive())
+				b1.draw();
+
+
+			al_draw_bitmap(player, player_x, player_y, 0);
+			al_flip_display();
+		}
+	}
+	al_destroy_bitmap(player);
+	al_destroy_timer(timer);
+	al_destroy_display(display);
+	al_destroy_event_queue(event_queue);
+	return 0;
 }

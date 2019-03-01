@@ -27,7 +27,7 @@ void bullet::kill() {
 }
 
 void bullet::draw() {
-	al_draw_filled_rectangle(xPos, yPos, xPos + 2, yPos + 15, al_map_rgb(255, 255, 0));
+	al_draw_filled_rectangle(xPos, yPos, xPos + 3, yPos + 15, al_map_rgb(255, 255, 0));
 }
 
 int bullet::getX() {
