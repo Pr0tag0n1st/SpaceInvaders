@@ -23,12 +23,13 @@ int main() {
 	bool doexit = false;
 
 	al_init();
+	al_init_primitives_addon();
 	al_init_image_addon();
 	al_install_keyboard();
 	timer = al_create_timer(1.0 / FPS);
 	display = al_create_display(SCREEN_W, SCREEN_H);
 
-	player = al_load_bitmap("Spaceship.png");
+	player = al_load_bitmap("spaceship.png");
 	if (player == NULL)
 		cout << "ship didn't load" << endl;
 
@@ -60,12 +61,12 @@ int main() {
 			if (key[KEY_LEFT] && player_x >= 4.0) {
 				player_x -= 4.0;
 			}
-			if (key[KEY_RIGHT] && player_x <= SCREEN_W - 50) {
+			if (key[KEY_RIGHT] && player_x <= SCREEN_W - 22) {
 				player_x += 4.0;
 			}
-			if (key[KEY_Z] && b1.isAlive()) {
+			if (key[KEY_Z] && !b1.isAlive()) {
 				cout << "pew" << endl;
-				b1.fire(player_x + 30, player_y + 5);
+				b1.fire(player_x + 11, player_y);
 			}
 			if (b1.isAlive())
 				b1.move();
