@@ -4,6 +4,8 @@
 #include <allegro5/allegro_image.h>
 #include "Globals.h"
 #include "Bullet.h"
+#include "Invader.h"
+#include <list>
 using namespace std;
 
 enum KEYS {
@@ -16,6 +18,7 @@ int main() {
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 	ALLEGRO_BITMAP *player = NULL;
+	int counter = 0;
 	double player_x = SCREEN_W / 2.0;
 	double player_y = SCREEN_H - 50;
 	bool key[3] = { false, false, false };
@@ -35,6 +38,14 @@ int main() {
 
 	bullet b1;
 	b1.initBullet(0, 0);
+
+	list<invader *> enemies;
+	list<invader *>::iterator iter;
+
+	for (int i = 0; i < 5; i++) {
+		invader *alien = new invader(50 + i * 100, 100);
+		enemies.push_back(alien);
+	}
 
 	al_set_target_bitmap(al_get_backbuffer(display));
 
@@ -58,6 +69,11 @@ int main() {
 
 		//Timer Section////////////////////////
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
+
+			counter++;
+			if (counter % 75 == 0)
+				for (iter = enemies.begin(); iter != enemies.end(); iter++)
+					(*iter)->move();
 			if (key[KEY_LEFT] && player_x >= 4.0) {
 				player_x -= 4.0;
 			}
@@ -70,6 +86,8 @@ int main() {
 			}
 			if (b1.isAlive())
 				b1.move();
+
+
 
 			redraw = true;
 		}
@@ -108,6 +126,8 @@ int main() {
 				break;
 			}
 		}
+		
+		
 		if (redraw && al_is_event_queue_empty(event_queue)) {
 			redraw = false;
 
@@ -115,7 +135,8 @@ int main() {
 
 			if (b1.isAlive())
 				b1.draw();
-
+			for (iter = enemies.begin(); iter != enemies.end(); iter++)
+				(*iter)->draw();
 
 			al_draw_bitmap(player, player_x, player_y, 0);
 			al_flip_display();
