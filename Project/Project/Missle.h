@@ -1,12 +1,17 @@
 #pragma once
-class bullet {
+#include <array>
+
+class missile {
 private:
-	int xPos;
-	int yPos;
+	double xPos;
+	double yPos;
 	bool alive;
+	char shape;
+	float points[8];
 
 public:
-	void initBullet(int x, int y);
+	missile();
+	void initMissile(int x, int y);
 	void move();
 	void kill();
 	void draw();
@@ -15,5 +20,4 @@ public:
 	bool isAlive();
 	int getX();
 	int getY();
-
 };

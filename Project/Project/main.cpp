@@ -5,6 +5,7 @@
 #include "Globals.h"
 #include "Bullet.h"
 #include "Invader.h"
+#include "Missle.h"
 #include <list>
 using namespace std;
 
@@ -47,6 +48,14 @@ int main() {
 		enemies.push_back(alien);
 	}
 
+	list<missile *> bombs;
+	list<missile *>::iterator iter2;
+
+	for (int i = 0; i < 5; i++) {
+		missile *bomb = new missile();
+		bombs.push_back(bomb);
+	}
+
 	al_set_target_bitmap(al_get_backbuffer(display));
 
 	event_queue = al_create_event_queue();
@@ -87,7 +96,10 @@ int main() {
 			if (b1.isAlive())
 				b1.move();
 
-
+			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
+				if (b1.hit((*iter)->getX(), (*iter)->getY()))
+					(*iter)->kill();
+			}
 
 			redraw = true;
 		}

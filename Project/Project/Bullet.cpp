@@ -31,6 +31,15 @@ void bullet::kill() {
 	alive = false;
 }
 
+bool bullet::hit(int x, int y) {
+	if ((xPos > x) && (xPos < x + 32) && (yPos < y + 32) && (yPos)) {
+		alive = false;
+		return true;
+	}
+	else
+		return false;
+}
+
 void bullet::draw() {
 	al_draw_filled_rectangle(xPos, yPos, xPos + 2, yPos + 10, al_map_rgb(255, 255, 255));
 	cout << "Draw " << endl;

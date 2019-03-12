@@ -125,11 +125,13 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="invader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Missle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Invader.h" />
+    <ClInclude Include="Missle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
