@@ -126,9 +126,11 @@
     <ClCompile Include="invader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Missle.cpp" />
+    <ClCompile Include="Bunker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Bunker.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Invader.h" />
     <ClInclude Include="Missle.h" />

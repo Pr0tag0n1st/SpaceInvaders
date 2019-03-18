@@ -27,6 +27,9 @@
     <ClCompile Include="Missle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Bunker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Globals.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Missle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bunker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

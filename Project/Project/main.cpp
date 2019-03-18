@@ -8,6 +8,7 @@
 #include "Bullet.h"
 #include "Invader.h"
 #include "Missle.h"
+#include "Bunker.h"
 #include <list>
 using namespace std;
 
@@ -57,6 +58,14 @@ int main() {
 		bombs.push_back(bomb);
 	}
 
+	list<bunker *> walls;
+	list<bunker *>::iterator iter3;
+
+	for (int i = 0; i < 5; i++) {
+		bunker *wall = new bunker(80 + i * 50, SCREEN_H - 75);
+		walls.push_back(wall);
+	}
+
 	al_set_target_bitmap(al_get_backbuffer(display));
 
 	event_queue = al_create_event_queue();
@@ -79,11 +88,13 @@ int main() {
 
 		//Timer Section////////////////////////
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
-
+			
+			//move delay
 			counter++;
 			if (counter % 75 == 0)
 				for (iter = enemies.begin(); iter != enemies.end(); iter++)
 					(*iter)->move();
+			//player movement + fire
 			if (key[KEY_LEFT] && player_x >= 4.0) {
 				player_x -= 4.0;
 			}
@@ -97,11 +108,13 @@ int main() {
 			if (b1.isAlive())
 				b1.move();
 
+			//bullet/enemy collision
 			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
 				if (b1.hit((*iter)->getX(), (*iter)->getY()))
 					(*iter)->kill();
 			}
 
+			//enemy missile generation+movement
 			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
 				if ((*iter)->isAlive()) {
 					for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++) {
@@ -117,6 +130,7 @@ int main() {
 					(*iter2)->move();
 			}
 
+			//missile/player collision
 			for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++) {
 				if ((*iter2)->hit(player_x, player_y)) {
 					cout << "IMPACT";
