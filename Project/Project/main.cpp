@@ -143,6 +143,19 @@ int main() {
 				}
 			}
 
+			//missile/wall collision
+			for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++) {
+				for (iter3 = walls.begin(); iter3 != walls.end(); iter3++) {
+					if ((*iter3)->isAlive() && (*iter2)->isAlive() && (*iter3)->isHit((*iter2)->getX(), (*iter2)->getY())) {
+						(*iter2)->kill();
+					}
+				}
+			}
+
+			for (iter3 = walls.begin(); iter3 != walls.end(); iter3++) {
+				(*iter3)->kill();
+			}
+
 			redraw = true;
 		}
 
@@ -181,7 +194,7 @@ int main() {
 			}
 		}
 		
-		
+		//render section
 		if (redraw && al_is_event_queue_empty(event_queue)) {
 			redraw = false;
 
@@ -196,6 +209,10 @@ int main() {
 
 			for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++)
 				if ((*iter2)->isAlive())
+					(*iter2)->draw();
+
+			for (iter3 = walls.begin(); iter3 != walls.end(); iter3++)
+				if ((*iter3)->isAlive())
 					(*iter2)->draw();
 
 			al_draw_bitmap(player, player_x, player_y, 0);
