@@ -38,11 +38,7 @@ void missile::fire(int x, int y) {
 	yPos = y;
 }
 
-void missile::fire(int x, int y) {
-	alive = true;
-	xPos = x;
-	yPos = y;
-}
+
 
 void missile::kill() {
 	alive = false;
@@ -64,7 +60,7 @@ void missile::draw() {
 }
 
 bool missile::hit(int x, int y) {
-	if ((xPos > x) && (xPos < x + 41) && (yPos < y + 21) && (yPos > y)) {
+	if ((xPos > x) && (xPos < x + 24) && (yPos < y + 44) && (yPos > y)) {
 		alive = false;
 		return true;
 	}

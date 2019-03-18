@@ -2,6 +2,8 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
+#include <Windows.h>
+#include <ctime>
 #include "Globals.h"
 #include "Bullet.h"
 #include "Invader.h"
@@ -12,7 +14,6 @@ using namespace std;
 enum KEYS {
 	KEY_LEFT, KEY_RIGHT, KEY_Z
 };
-
 
 int main() {
 	ALLEGRO_DISPLAY *display = NULL;
@@ -25,7 +26,7 @@ int main() {
 	bool key[3] = { false, false, false };
 	bool redraw = true;
 	bool doexit = false;
-
+	srand(time(NULL));
 	al_init();
 	al_init_primitives_addon();
 	al_init_image_addon();
@@ -91,7 +92,7 @@ int main() {
 			}
 			if (key[KEY_Z] && !b1.isAlive()) {
 				cout << "pew" << endl;
-				b1.fire(player_x + 11, player_y);
+				b1.fire(player_x + 11, player_y+10);
 			}
 			if (b1.isAlive())
 				b1.move();
@@ -99,6 +100,33 @@ int main() {
 			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
 				if (b1.hit((*iter)->getX(), (*iter)->getY()))
 					(*iter)->kill();
+			}
+
+			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
+				if ((*iter)->isAlive()) {
+					for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++) {
+						if (!((*iter2)->isAlive()) && rand() % 400 == 0) {
+							(*iter2)->fire((*iter)->getX(), (*iter)->getY());
+						}
+					}
+				}
+			}
+
+			for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++) {
+				if ((*iter2)->isAlive())
+					(*iter2)->move();
+			}
+
+			for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++) {
+				if ((*iter2)->hit(player_x, player_y)) {
+					cout << "IMPACT";
+					for (int i = 0; i < 100; i += 20) {
+						al_draw_filled_circle(player_x + 11, player_y + 22, 2 + i, al_map_rgb(200, 200, 50));
+						al_flip_display();
+						al_rest(0.2);
+					}
+					player_x = 0;
+				}
 			}
 
 			redraw = true;
@@ -147,10 +175,17 @@ int main() {
 
 			if (b1.isAlive())
 				b1.draw();
+
 			for (iter = enemies.begin(); iter != enemies.end(); iter++)
-				(*iter)->draw();
+				if((*iter)->isAlive())
+					(*iter)->draw();
+
+			for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++)
+				if ((*iter2)->isAlive())
+					(*iter2)->draw();
 
 			al_draw_bitmap(player, player_x, player_y, 0);
+
 			al_flip_display();
 		}
 	}
