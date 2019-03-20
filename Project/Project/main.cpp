@@ -2,11 +2,12 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_font.h>
 #include <Windows.h>
 #include <ctime>
 #include "Globals.h"
 #include "Bullet.h"
-#include "Invader.h"
+#include "invader.h"
 #include "Missle.h"
 #include "Bunker.h"
 #include <list>
@@ -21,7 +22,12 @@ int main() {
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 	ALLEGRO_BITMAP *player = NULL;
+	ALLEGRO_FONT *typeface = NULL;
+	ALLEGRO_BITMAP *lifecount = NULL;
+	
 	int counter = 0;
+	int score = 0;
+	int lives = 3;
 	double player_x = SCREEN_W / 2.0;
 	double player_y = SCREEN_H - 50;
 	bool key[3] = { false, false, false };
@@ -31,13 +37,20 @@ int main() {
 	al_init();
 	al_init_primitives_addon();
 	al_init_image_addon();
+	al_init_font_addon();
 	al_install_keyboard();
 	timer = al_create_timer(1.0 / FPS);
 	display = al_create_display(SCREEN_W, SCREEN_H);
+	typeface = al_create_builtin_font();
 
 	player = al_load_bitmap("spaceship.png");
 	if (player == NULL)
 		cout << "ship didn't load" << endl;
+
+	lifecount = al_load_bitmap("lifeicon.png");
+	if (lifecount == NULL)
+		cout << "lifeicon didn't load" << endl;
+
 
 	bullet b1;
 	b1.initBullet(0, 0);
@@ -62,7 +75,7 @@ int main() {
 	list<bunker *>::iterator iter3;
 
 	for (int i = 0; i < 5; i++) {
-		bunker *wall = new bunker(80 + i * 50, SCREEN_H - 75);
+		bunker *wall = new bunker(80 + i * 100, SCREEN_H - 75);
 		walls.push_back(wall);
 	}
 
@@ -91,9 +104,20 @@ int main() {
 			
 			//move delay
 			counter++;
-			if (counter % 75 == 0)
+			if (counter % 50 == 0) {
 				for (iter = enemies.begin(); iter != enemies.end(); iter++)
-					(*iter)->move();
+					if ((*iter)->isAlive())
+						(*iter)->move();
+			}
+
+			if (counter % 750 == 0 && counter <= 2250) {
+				for (int i = 0; i < 5; i++) {
+					invader *alien = new invader(50 + i * 100, 100);
+					enemies.push_back(alien);
+				}
+			}
+			//enemy generation
+
 			//player movement + fire
 			if (key[KEY_LEFT] && player_x >= 4.0) {
 				player_x -= 4.0;
@@ -102,17 +126,24 @@ int main() {
 				player_x += 4.0;
 			}
 			if (key[KEY_Z] && !b1.isAlive()) {
-				cout << "pew" << endl;
+//				cout << "pew" << endl;
 				b1.fire(player_x + 11, player_y+10);
 			}
 			if (b1.isAlive())
 				b1.move();
+			
+
+			
 
 			//bullet/enemy collision
 			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
-				if (b1.hit((*iter)->getX(), (*iter)->getY()))
+				if (b1.isAlive() && b1.hit((*iter)->getX(), (*iter)->getY()) && (*iter)->isAlive()) {
 					(*iter)->kill();
+					score++;
+				}
 			}
+
+
 
 			//enemy missile generation+movement
 			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
@@ -133,13 +164,14 @@ int main() {
 			//missile/player collision
 			for (iter2 = bombs.begin(); iter2 != bombs.end(); iter2++) {
 				if ((*iter2)->hit(player_x, player_y)) {
-					cout << "IMPACT";
+//					cout << "IMPACT";
 					for (int i = 0; i < 100; i += 20) {
 						al_draw_filled_circle(player_x + 11, player_y + 22, 2 + i, al_map_rgb(200, 200, 50));
 						al_flip_display();
 						al_rest(0.2);
 					}
 					player_x = 0;
+					lives -= 1;
 				}
 			}
 
@@ -155,8 +187,12 @@ int main() {
 			for (iter3 = walls.begin(); iter3 != walls.end(); iter3++) {
 				(*iter3)->kill();
 			}
-
+			if (lives == 0)
+				break;
 			redraw = true;
+
+			if (score == 20)
+				break;
 		}
 
 		//input section
@@ -200,6 +236,12 @@ int main() {
 
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 
+			al_draw_textf(typeface, al_map_rgb(255, 255, 255), 50, SCREEN_H - 10, 0, "SCORE: %d", score);
+
+			for (int i = lives; i != 0; i -= 1) {
+				al_draw_bitmap(lifecount, SCREEN_W - i * 20, SCREEN_H - 50, 0);
+			}
+
 			if (b1.isAlive())
 				b1.draw();
 
@@ -213,13 +255,29 @@ int main() {
 
 			for (iter3 = walls.begin(); iter3 != walls.end(); iter3++)
 				if ((*iter3)->isAlive())
-					(*iter2)->draw();
+					(*iter3)->draw();
 
 			al_draw_bitmap(player, player_x, player_y, 0);
 
 			al_flip_display();
 		}
+
 	}
+
+	if (score == 20) {
+		al_clear_to_color(al_map_rgb(0, 0, 0));
+		al_draw_text(typeface, al_map_rgb(255, 255, 255), SCREEN_W / 2, SCREEN_H / 2, 0, "YOU WIN!  CONGRATS!");
+		al_flip_display();
+		al_rest(2);
+	}
+
+	if (lives == 0) {
+		al_clear_to_color(al_map_rgb(0, 0, 0));
+		al_draw_text(typeface, al_map_rgb(255, 255, 255), SCREEN_W / 2, SCREEN_H / 2, 0, "GAME OVER");
+		al_flip_display();
+		al_rest(2);
+	}
+
 	al_destroy_bitmap(player);
 	al_destroy_timer(timer);
 	al_destroy_display(display);

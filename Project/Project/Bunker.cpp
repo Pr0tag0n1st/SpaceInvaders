@@ -10,10 +10,11 @@ bunker::bunker(int x, int y) {
 	hit0 = al_load_bitmap("undamagedbunker.jpg");
 	hit1 = al_load_bitmap("damagedbunker.jpg");
 	hit2 = al_load_bitmap("breakingbunker.jpg");
+	cout << "initbunker" << endl;
 }
 
 bool bunker::isHit(int x, int y) {
-	if ((x > xPos) && (x + 5 < xPos + 25) && y + 10 == yPos) {
+	if ((x > xPos) && (x + 5 < xPos + 50) && y + 25 == yPos ) {
 		cout << "bunker hit" << endl;
 		health--;
 		return true;

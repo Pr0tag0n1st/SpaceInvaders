@@ -13,6 +13,7 @@ missile::missile() {
 		shape = 'c';
 	else
 		shape = 's';
+	cout << "initmissile" << endl;
 }
 
 void missile::initMissile(int x, int y) {

@@ -1,16 +1,7 @@
 #include "Invader.h"
-#include <allegro5/allegro_primitives.h>
 #include <iostream>
 using namespace std;
 
-invader::invader() {
-	xpos = 0;
-	ypos = 0;
-	alive = true;
-	direction = 'r';
-	lastDirection = 'l';
-	stepCount = 0;
-}
 
 invader::invader(int x, int y) {
 	xpos = x;
@@ -19,6 +10,8 @@ invader::invader(int x, int y) {
 	direction = 'r';
 	lastDirection = 'l';
 	stepCount = 0;
+	cout << "initinvader" << endl;
+	enemysprite = al_load_bitmap("ENEMY.jpg");
 }
 
 void invader::initInvader(int x, int y) {
@@ -31,7 +24,7 @@ void invader::initInvader(int x, int y) {
 
 void invader::move() {
 	stepCount++;
-	cout << "direction " << direction << endl;
+//	cout << "direction " << direction << endl;
 	if (direction == 'r') {
 		xpos += 20;
 		if (stepCount > 4) {
@@ -73,7 +66,8 @@ void invader::kill() {
 }
 
 void invader::draw() {
-	al_draw_filled_rectangle(xpos, ypos, xpos + 30, ypos + 30, al_map_rgb(0, 255, 155));
+	al_draw_bitmap(enemysprite, xpos, ypos, 0);
+//	al_draw_filled_rectangle(xpos, ypos, xpos + 30, ypos + 30, al_map_rgb(100, 255, 100));
 }
 
 int invader::getX() {

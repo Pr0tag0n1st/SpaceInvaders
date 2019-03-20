@@ -1,4 +1,7 @@
 #pragma once
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
 class invader {
 private:
 	int xpos;
@@ -7,6 +10,7 @@ private:
 	char direction;
 	int stepCount;
 	char lastDirection;
+	ALLEGRO_BITMAP *enemysprite = NULL;
 
 public:
 	invader();
