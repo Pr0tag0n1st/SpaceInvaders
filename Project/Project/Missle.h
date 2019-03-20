@@ -8,6 +8,7 @@ private:
 	bool alive;
 	char shape;
 	float points[8];
+	double timer;
 
 public:
 	missile();
