@@ -3,6 +3,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
+#include <fstream>
 #include <Windows.h>
 #include <ctime>
 #include "Globals.h"
@@ -18,12 +19,29 @@ enum KEYS {
 };
 
 int main() {
+	int scores[5];
+	int highscores[5];
+	ifstream scoreread;
+	int num;
+	scoreread.open("HISCORE.txt");
+	for (int i = 0; i < 5; i++) {
+		scoreread >> num;
+		scores[i] = num;
+		cout << scores[i] << endl;
+	}
+	scoreread.close();
+
+	int tempscore;
+	ofstream scoresave;
+	scoresave.open("HISCORE.txt");
+
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 	ALLEGRO_BITMAP *player = NULL;
 	ALLEGRO_FONT *typeface = NULL;
 	ALLEGRO_BITMAP *lifecount = NULL;
+	ALLEGRO_BITMAP *dino = NULL;
 	
 	int counter = 0;
 	int score = 0;
@@ -50,6 +68,30 @@ int main() {
 	lifecount = al_load_bitmap("lifeicon.png");
 	if (lifecount == NULL)
 		cout << "lifeicon didn't load" << endl;
+
+	dino = al_load_bitmap("DinoStudios.jpg");
+	al_draw_bitmap(dino, 0, 0, 0);
+	al_flip_display();
+	al_rest(0.5);
+	for (int i = 255; i > 0; i -= 5) {
+		al_draw_tinted_bitmap(dino, al_map_rgb(i, i, i), 0, 0, 0);
+		al_flip_display();
+		al_rest(0.05);
+	}
+	al_clear_to_color(al_map_rgb(0, 0, 0));
+
+	al_draw_textf(typeface, al_map_rgb(255, 255, 255), SCREEN_W/3, SCREEN_H/3, 0, "Top 5 Scores:");
+	al_rest(0.5);
+	al_flip_display();
+	for (int i = 0; i < 5; i++) {
+
+		al_draw_textf(typeface, al_map_rgb(255, 255, 255), SCREEN_W/3, SCREEN_H/3+25 + i * 50, 0, "%d", scores[i]);
+		al_rest(0.25);
+		al_flip_display();
+
+	}
+	al_rest(1);
+
 
 
 	bullet b1;
@@ -137,7 +179,7 @@ int main() {
 
 			//bullet/enemy collision
 			for (iter = enemies.begin(); iter != enemies.end(); iter++) {
-				if (b1.isAlive() && b1.hit((*iter)->getX(), (*iter)->getY()) && (*iter)->isAlive()) {
+				if (b1.isAlive() && (*iter)->isAlive() && b1.hit((*iter)->getX(), (*iter)->getY()) ) {
 					(*iter)->kill();
 					score++;
 				}
@@ -262,7 +304,21 @@ int main() {
 			al_flip_display();
 		}
 
+
+
 	}
+	score += lives * 5;
+
+	for (int i = 0; i < 5; i++) {
+		if (score > scores[i]) {
+			tempscore = scores[i];
+			highscores[i] = score;
+			score = tempscore;
+		}
+		else
+			highscores[i] = scores[i];
+	}
+
 
 	if (score == 20) {
 		al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -271,11 +327,24 @@ int main() {
 		al_rest(2);
 	}
 
+
 	if (lives == 0) {
 		al_clear_to_color(al_map_rgb(0, 0, 0));
 		al_draw_text(typeface, al_map_rgb(255, 255, 255), SCREEN_W / 2, SCREEN_H / 2, 0, "GAME OVER");
 		al_flip_display();
 		al_rest(2);
+	}
+
+	al_draw_textf(typeface, al_map_rgb(255, 255, 255), SCREEN_W/3, SCREEN_H/3, 0, "Top 5 Scores:");
+	for (int i = 0; i < 5; i++) {
+		al_draw_textf(typeface, al_map_rgb(255, 255, 255), SCREEN_W / 3, SCREEN_H/3+25 + i * 50, 0, "%d", highscores[i]);
+		al_rest(0.25);
+		al_flip_display();
+	}
+	al_rest(1);
+	al_flip_display();
+	for (int i = 0; i < 5; i++) {
+		scoresave << highscores[i] << endl;;
 	}
 
 	al_destroy_bitmap(player);

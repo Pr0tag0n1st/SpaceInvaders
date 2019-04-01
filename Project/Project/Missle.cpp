@@ -29,11 +29,16 @@ void missile::initMissile(int x, int y) {
 }
 
 void missile::move() {
-//	timer+=.1;
-	//if (timer >3.14*2)
-		//timer = -3.14*2;
-	//xPos += sin(timer)*5;
-	//yPos += cos(timer)*5+1;
+
+	//timer+=.1;
+	//if (timer > 3.14 * 2) {
+	//	timer = -3.14 * 2;
+	//}
+	//if (rand() % 2 == 0) {
+	//	xPos += sin(timer) * 5;
+	//	yPos += cos(timer) * 5 + 1;
+	//}
+	//else
 	yPos += 8;
 	if (yPos > SCREEN_H)
 		alive = false;
